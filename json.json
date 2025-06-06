@@ -1,0 +1,35 @@
+{
+  "currentUser": {
+    "phone": "23456789"
+  },
+  "contacts": [
+    {
+      "id": "1749178172318oarph75ma",
+      "name": "moustapha ndiaye",
+      "firstName": "moustapha",
+      "lastName": "ndiaye",
+      "phone": "771411251",
+      "lastMessage": "u",
+      "time": "02:50",
+      "avatar": "MN",
+      "unread": 0,
+      "online": true,
+      "type": "contact",
+      "dateAdded": "2025-06-06T02:49:32.318Z"
+    }
+  ],
+  "groups": [],
+  "messages": {
+    "1749178172318oarph75ma": [
+      {
+        "id": "1749178258529ioq7x5s4s",
+        "text": "u",
+        "sender": "me",
+        "time": "02:50",
+        "timestamp": 1749178258530
+      }
+    ]
+  },
+  "archived": [],
+  "blocked": []
+}

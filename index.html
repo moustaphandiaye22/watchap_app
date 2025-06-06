@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Clone</title>
+    <link rel="stylesheet" href="src/index.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <!-- Page de connexion -->
+    <div id="loginPage" class="min-h-screen bg-gradient-to-br from-green-400 via-green-500 to-green-600 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="bg-green-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-comment text-white text-3xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">WhatsApp</h1>
+                <p id="loginSubtitle" class="text-gray-600">Entrez votre numéro de téléphone</p>
+            </div>
+
+            <div class="space-y-6">
+                <div id="phoneStep">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Numéro de téléphone</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-gray-500">🇸🇳 +221</span>
+                        <input
+                            type="tel"
+                            id="phoneInput"
+                            class="w-full pl-20 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="77 777 77 77"/>
+                    </div>
+                </div>
+
+                <div id="verifyStep" class="hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Code de vérification</label>
+                    <input
+                        type="text"
+                        id="codeInput"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-center text-2xl tracking-widest outline-none"
+                        placeholder="- - - - - -"
+                        maxlength="6"/>
+                    <p id="phoneNumber" class="text-sm text-gray-500 mt-2 text-center"></p>
+                </div>
+
+                <button
+                    id="loginBtn"
+                    class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105">
+                    Continuer
+                </button>
+
+                <button
+                    id="changeNumberBtn"
+                    class="w-full text-green-500 hover:text-green-600 font-medium py-2 hidden" >
+                    Changer le numéro
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interface principale -->
+    <div id="mainApp" class="h-screen bg-gray-100 flex hidden">
+        <!-- Sidebar -->
+        <div class="w-1/3 bg-white border-r border-gray-200 flex flex-col">
+            <!-- Header -->
+            <div class="bg-gray-50 p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <span class="font-semibold text-gray-800">Mon WhatsApp</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="p-2 hover:bg-gray-200 rounded-full">
+                            <i class="fas fa-cog text-gray-600"></i>
+                        </button>
+                        <button id="logoutBtn" class="p-2 hover:bg-gray-200 rounded-full">
+                            <i class="fas fa-sign-out-alt text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Rechercher ou commencer une nouvelle discussion"
+                        class="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                </div>
+            </div>
+
+            <!-- Liste des conversations -->
+            <div id="contactsList" class="flex-1 overflow-y-auto"></div>
+        </div>
+
+        <!-- Zone de chat -->
+        <div class="flex-1 flex flex-col">
+            <!-- État initial -->
+            <div id="welcomeScreen" class="flex-1 flex items-center justify-center bg-gray-50">
+                <div class="text-center">
+                    <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-comment text-green-500 text-5xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-2">WhatsApp Web</h2>
+                    <p class="text-gray-600 max-w-md">
+                        Sélectionnez une conversation pour commencer à discuter.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Zone de chat active -->
+            <div id="chatArea" class="hidden flex-1 flex flex-col">
+                <!-- Header du chat -->
+                <div id="chatHeader" class="bg-gray-50 p-4 border-b border-gray-200 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div id="chatAvatar" class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg"></div>
+                        <div>
+                            <h3 id="chatName" class="font-semibold text-gray-800"></h3>
+                            <p id="chatStatus" class="text-sm text-gray-500"></p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="p-2 hover:bg-gray-200 rounded-full">
+                            <i class="fas fa-video text-gray-600"></i>
+                        </button>
+                        <button class="p-2 hover:bg-gray-200 rounded-full">
+                            <i class="fas fa-phone text-gray-600"></i>
+                        </button>
+                        <button class="p-2 hover:bg-gray-200 rounded-full">
+                            <i class="fas fa-ellipsis-v text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-gray-50" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8cmVjdCB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIGZpbGw9InJnYmEoMCwwLDAsMC4wMikiLz4KICAgICAgPGNpcmNsZSBjeD0iMTUiIGN5PSIxNSIgcj0iMS41IiBmaWxsPSJyZ2JhKDAsMCwwLDAuMDUpIi8+CiAgICA8L3BhdHRlcm4+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz4KPC9zdmc+');">
+                    <div id="messagesList" class="space-y-4"></div>
+                </div>
+
+                <!-- Zone de saisie -->
+                <div class="bg-gray-50 p-4 border-t border-gray-200">
+                    <div class="flex items-center space-x-3">
+                        <button class="p-2 hover:bg-gray-200 rounded-full transition-colors">
+                            <i class="fas fa-paperclip text-gray-600"></i>
+                        </button>
+                        <div class="flex-1 relative">
+                            <input
+                                type="text"
+                                id="messageInput"
+                                placeholder="Tapez un message"
+                                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                            />
+                        </div>
+                        <button id="sendBtn" class="p-3 bg-green-500 hover:bg-green-600 rounded-full transition-colors">
+                            <i id="sendIcon" class="fas fa-microphone text-white"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+  
+</body>
+<script src="src/main.js"></script>
+<script src="event.js"></script>
+</html>
