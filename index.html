@@ -4,10 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp Clone</title>
+        <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="src/index.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Styles CSS additionnels pour une meilleure intégration -->
+    <style>
+        /* Animations pour les transitions */
+        .broadcast-selected {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+        }
+
+        .broadcast-contact {
+            transition: all 0.2s ease;
+        }
+
+        .broadcast-contact:hover {
+            transform: translateX(4px);
+        }
+
+        /* Amélioration de l'apparence du mode sombre */
+        .dark .bg-green-50 {
+            background-color: #065f46 !important;
+            border-color: #059669 !important;
+        }
+
+        .dark .bg-blue-50 {
+            background-color: #1e3a8a !important;
+            border-color: #3b82f6 !important;
+        }
+
+        /* Indicateur de diffusion dans les messages */
+        .broadcast-message::after {
+            content: "📡";
+            font-size: 0.8em;
+            opacity: 0.6;
+            margin-left: 4px;
+        }
+
+        /* Styles pour les menus déroulants */
+        .dropdown-menu {
+            animation: fadeIn 0.15s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Fermeture automatique des menus au clic extérieur */
+        .dropdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 40;
+        }
+        .error-message {
+    color: red;
+    font-size: 0.875rem;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+    </style>
 </head>
 <body class="bg-gray-100">
     <!-- Page de connexion -->
@@ -31,6 +99,7 @@
                             id="phoneInput"
                             class="w-full pl-20 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="77 777 77 77"/>
+                            <small id="errorPhone" class="error-message"></small>
                     </div>
                 </div>
 
@@ -42,6 +111,7 @@
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-center text-2xl tracking-widest outline-none"
                         placeholder="- - - - - -"
                         maxlength="6"/>
+                        <small id="errorCode" class="error-message"></small>
                     <p id="phoneNumber" class="text-sm text-gray-500 mt-2 text-center"></p>
                 </div>
 
@@ -73,11 +143,88 @@
                         </div>
                         <span class="font-semibold text-gray-800">Mon WhatsApp</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="p-2 hover:bg-gray-200 rounded-full">
-                            <i class="fas fa-cog text-gray-600"></i>
-                        </button>
-                        <button id="logoutBtn" class="p-2 hover:bg-gray-200 rounded-full">
+                    <!-- Barre d'outils supérieure avec menus déroulants -->
+                    <div class="flex items-center space-x-2 relative">
+                        <!-- Menu Diffusion -->
+                        <div class="relative">
+                            <button id="broadcastBtn" onclick="toggleDropdown('broadcastMenu')" class="p-2 hover:bg-gray-200 rounded-full" title="Mode diffusion">
+                                <i class="fas fa-broadcast-tower text-gray-600"></i>
+                            </button>
+                            <div id="broadcastMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <div class="py-2">
+                                    <button onclick="toggleBroadcastMode()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-broadcast-tower mr-2 text-gray-500"></i>
+                                        Activer la diffusion
+                                    </button>
+                                    <button onclick="createBroadcastList()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-list mr-2 text-gray-500"></i>
+                                        Nouvelle liste
+                                    </button>
+                                    <button onclick="manageBroadcastLists()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-edit mr-2 text-gray-500"></i>
+                                        Gérer les listes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Menu Thème -->
+                        <div class="relative">
+                            <button onclick="toggleDropdown('themeMenu')" class="p-2 hover:bg-gray-200 rounded-full" title="Changer de thème">
+                                <i id="themeIcon" class="fas fa-moon text-gray-600"></i>
+                            </button>
+                            <div id="themeMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <div class="py-2">
+                                    <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-sun mr-2 text-gray-500"></i>
+                                        Thème clair
+                                    </button>
+                                    <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-moon mr-2 text-gray-500"></i>
+                                        Thème sombre
+                                    </button>
+                                    <button onclick="setTheme('auto')" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-adjust mr-2 text-gray-500"></i>
+                                        Automatique
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Menu Paramètres -->
+                        <div class="relative">
+                            <button onclick="toggleDropdown('settingsMenu')" class="p-2 hover:bg-gray-200 rounded-full" title="Paramètres">
+                                <i class="fas fa-cog text-gray-600"></i>
+                            </button>
+                            <div id="settingsMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <div class="py-2">
+                                    <button onclick="openProfile()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-user mr-2 text-gray-500"></i>
+                                        Profil
+                                    </button>
+                                    <button onclick="openSettings()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-cog mr-2 text-gray-500"></i>
+                                        Paramètres
+                                    </button>
+                                    <button onclick="openNotifications()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-bell mr-2 text-gray-500"></i>
+                                        Notifications
+                                    </button>
+                                    <button onclick="openPrivacy()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-lock mr-2 text-gray-500"></i>
+                                        Confidentialité
+                                    </button>
+                                    <div class="border-t border-gray-200 my-1"></div>
+                                    <button onclick="openHelp()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-question-circle mr-2 text-gray-500"></i>
+                                        Aide
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bouton Déconnexion (sans menu) -->
+                        <button id="logoutBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Déconnexion">
                             <i class="fas fa-sign-out-alt text-gray-600"></i>
                         </button>
                     </div>
@@ -91,6 +238,24 @@
                         placeholder="Rechercher ou commencer une nouvelle discussion"
                         class="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
+                </div>
+            </div>
+
+            <!-- Panel de contrôle pour la diffusion (caché par défaut) -->
+            <div id="broadcastPanel" class="hidden bg-gray-50 dark:bg-gray-700 p-3 rounded mx-4 mb-2 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Mode Diffusion</span>
+                    <button onclick="toggleBroadcastMode()" class="text-red-500 hover:text-red-700 text-xs">
+                        <i class="fas fa-times"></i> Quitter
+                    </button>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="selectAllContacts()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
+                        Tout sélectionner
+                    </button>
+                    <button onclick="deselectAllContacts()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
+                        Tout désélectionner
+                    </button>
                 </div>
             </div>
 
@@ -142,8 +307,8 @@
                     <div id="messagesList" class="space-y-4"></div>
                 </div>
 
-                <!-- Zone de saisie -->
-                <div class="bg-gray-50 p-4 border-t border-gray-200">
+                <!-- Zone de saisie modifiée pour supporter la diffusion -->
+                <div id="messageInputContainer" class="bg-gray-50 p-4 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex items-center space-x-3">
                         <button class="p-2 hover:bg-gray-200 rounded-full transition-colors">
                             <i class="fas fa-paperclip text-gray-600"></i>
@@ -153,10 +318,12 @@
                                 type="text"
                                 id="messageInput"
                                 placeholder="Tapez un message"
-                                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500"
+                                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                                onkeypress="if(event.key==='Enter') {broadcastMode ? sendBroadcastMessage() : sendMessage()}"
+                                oninput="updateSendButton()"
                             />
                         </div>
-                        <button id="sendBtn" class="p-3 bg-green-500 hover:bg-green-600 rounded-full transition-colors">
+                        <button id="sendBtn" onclick="sendMessage()" class="p-3 bg-green-500 hover:bg-green-600 rounded-full transition-colors">
                             <i id="sendIcon" class="fas fa-microphone text-white"></i>
                         </button>
                     </div>
@@ -164,9 +331,9 @@
             </div>
         </div>
     </div>
-
-  
-</body>
-<script src="src/main.js"></script>
+  <script src="src/main.js"></script>
 <script src="event.js"></script>
+<script src="controller.js"></script>
+
+</body>
 </html>

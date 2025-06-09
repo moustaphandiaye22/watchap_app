@@ -1,35 +1,69 @@
-{
-  "currentUser": {
-    "phone": "23456789"
+[
+  {
+    "currentUser": {
+      "phone": "23456789"
+    },
+    "contacts": [],
+    "groups": [],
+    "messages": {},
+    "archived": [],
+    "blocked": []
   },
-  "contacts": [
-    {
-      "id": "1749178172318oarph75ma",
-      "name": "moustapha ndiaye",
-      "firstName": "moustapha",
-      "lastName": "ndiaye",
-      "phone": "771411251",
-      "lastMessage": "u",
-      "time": "02:50",
-      "avatar": "MN",
-      "unread": 0,
-      "online": true,
-      "type": "contact",
-      "dateAdded": "2025-06-06T02:49:32.318Z"
-    }
-  ],
-  "groups": [],
-  "messages": {
-    "1749178172318oarph75ma": [
+  {
+    "0": {
+      "currentUser": {
+        "phone": "23456789"
+      },
+      "contacts": [],
+      "groups": [],
+      "messages": {},
+      "archived": [],
+      "blocked": []
+    },
+    "currentUser": {
+      "phone": "2345678988"
+    },
+    "contacts": [],
+    "groups": [],
+    "messages": {},
+    "archived": [],
+    "blocked": []
+  },
+  {
+    "0": {
+      "currentUser": {
+        "phone": "23456789"
+      },
+      "contacts": [],
+      "groups": [],
+      "messages": {},
+      "archived": [],
+      "blocked": []
+    },
+    "currentUser": {
+      "phone": "2345678988"
+    },
+    "contacts": [
       {
-        "id": "1749178258529ioq7x5s4s",
-        "text": "u",
-        "sender": "me",
-        "time": "02:50",
-        "timestamp": 1749178258530
+        "id": "1749436408977gng58x4up",
+        "name": "moustapha ndiaye",
+        "firstName": "moustapha",
+        "lastName": "ndiaye",
+        "phone": "+221771411251",
+        "lastMessage": "Contact ajouté",
+        "time": "02:33",
+        "avatar": "MN",
+        "unread": 0,
+        "online": false,
+        "type": "contact",
+        "dateAdded": "2025-06-09T02:33:28.978Z"
       }
-    ]
-  },
-  "archived": [],
-  "blocked": []
-}
+    ],
+    "groups": [],
+    "messages": {
+      "1749436408977gng58x4up": []
+    },
+    "archived": [],
+    "blocked": []
+  }
+]

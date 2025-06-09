@@ -2,8 +2,7 @@ Installation et exécution
 Crée un fichier json.json à la racine du projet :
 
 json
-Copier
-Modifier
+
 {
   "currentUser": null,
   "contacts": [],
@@ -14,25 +13,16 @@ Modifier
 }
 Initialise ton projet Node.js :
 
-bash
-Copier
-Modifier
 npm init -y
 npm install express cors
 Place le code de api.js dans ton dossier projet.
 
 Lance ton API :
 
-bash
-Copier
-Modifier
 node api.js
 🟩 Côté front-end (dans main.js) :
 Modifie la fonction saveData() ainsi :
 
-js
-Copier
-Modifier
 function saveData() {
     fetch('http://localhost:3000/data', {
         method: 'POST',
@@ -45,9 +35,6 @@ function saveData() {
 }
 Et la fonction loadData() dans event.js :
 
-js
-Copier
-Modifier
 async function loadData() {
     try {
         const response = await fetch('http://localhost:3000/data');
