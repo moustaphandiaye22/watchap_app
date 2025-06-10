@@ -1,10 +1,9 @@
 // Chargement des données JSON
-async function loadeData() {
+async function initializeAppData() {
     try {
         const response = await fetch('json.json');
         if (!response.ok) throw new Error('Réponse non OK');
         const data = await response.json();
-        // CORRECTION: Utiliser appData global au lieu de window.appData
         appData = { ...appData, ...data };
         console.log('Données chargées :', appData);
     } catch (error) {
@@ -39,7 +38,7 @@ async function loadeData() {
 
 // Initialisation au chargement du DOM
 document.addEventListener('DOMContentLoaded', () => {
-    loadData();
+    initializeAppData();
 
     // Connexion
     const loginBtn = document.getElementById('loginBtn');
@@ -102,10 +101,10 @@ function addQuickActionButtons() {
 
     buttons.reverse().forEach(({ icon, title, action }) => {
         const btn = document.createElement('button');
-        // CORRECTION: Couleur du bouton et de l'icône
+
         btn.className = 'p-2 bg-green-600 hover:bg-green-700 rounded-full';
         btn.title = title;
-        btn.innerHTML = `<i class="fas ${icon} text-white"></i>`; // Icône blanche
+        btn.innerHTML = `<i class="fas ${icon} text-gray-300"></i>`; // Icône blanche
         btn.addEventListener('click', action);
         header.insertBefore(btn, header.firstChild);
     });
@@ -114,7 +113,7 @@ function addQuickActionButtons() {
 // Modales génériques
 function showModal(id, title, contentHtml) {
     const modal = document.getElementById(id);
-    if (modal) modal.remove(); // supprime modal existant avec le même ID
+    if (modal) modal.remove(); 
 
     const template = `
         <div id="${id}" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -135,10 +134,8 @@ function showModal(id, title, contentHtml) {
 
 // Conversations archivées
 function showArchivedChats() {
-    // CORRECTION: Vérifier appData directement
     if (!appData || !appData.contacts) return;
     
-    // CORRECTION: Combiner contacts et groupes archivés
     const allChats = [...appData.contacts, ...appData.groups];
     const archived = allChats.filter(c => isArchived(c.id)) || [];
     
