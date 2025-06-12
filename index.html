@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp Clone</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="src/index.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
@@ -74,8 +74,6 @@
             display: block;
             margin-top: 0.25rem;
         }
-        
-
     </style>
 </head>
 <body class="bg-gray-100">
@@ -99,8 +97,8 @@
                             type="tel"
                             id="phoneInput"
                             class="w-full pl-20 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            placeholder="77 777 77 77"/>
-                            <small id="errorPhone" class="error-message"></small>
+                            placeholder="77 777 77 77">
+                        <small id="errorPhoneInput" class="error-message hidden"></small>
                     </div>
                 </div>
 
@@ -111,8 +109,8 @@
                         id="codeInput"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-center text-2xl tracking-widest outline-none"
                         placeholder="- - - - - -"
-                        maxlength="6"/>
-                        <small id="errorCode" class="error-message"></small>
+                        maxlength="6">
+                    <small id="errorcodeInput" class="error-message hidden"></small>
                     <p id="phoneNumber" class="text-sm text-gray-500 mt-2 text-center"></p>
                 </div>
 
@@ -124,7 +122,7 @@
 
                 <button
                     id="changeNumberBtn"
-                    class="w-full text-green-500 hover:text-green-600 font-medium py-2 hidden" >
+                    class="w-full text-green-500 hover:text-green-600 font-medium py-2 hidden">
                     Changer le numéro
                 </button>
             </div>
@@ -132,16 +130,13 @@
     </div>
 
     <!-- Interface principale -->
-    <div id="mainApp" class="h-screen bg-gray-100 flex hidden">
+    <div id="mainApp" class="h-screen ml-20 bg-gray-100 flex hidden">
         <!-- Sidebar -->
         <div class="w-1/3 bg-white border-r border-gray-200 flex flex-col">
             <!-- Header -->
             <div class="bg-gray-50 p-4 border-b border-gray-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-white"></i>
-                        </div>
                         <span class="font-semibold text-gray-800">Mon WhatsApp</span>
                     </div>
                     <!-- Barre d'outils supérieure avec menus déroulants -->
@@ -169,61 +164,6 @@
                             </div>
                         </div>
 
-                        <!-- Menu Thème -->
-                        <div class="relative">
-                            <button onclick="toggleDropdown('themeMenu')" class="p-2 hover:bg-gray-200 rounded-full" title="Changer de thème">
-                                <i id="themeIcon" class="fas fa-moon text-gray-600"></i>
-                            </button>
-                            <div id="themeMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                                <div class="py-2">
-                                    <button onclick="setTheme('light')" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-sun mr-2 text-gray-500"></i>
-                                        Thème clair
-                                    </button>
-                                    <button onclick="setTheme('dark')" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-moon mr-2 text-gray-500"></i>
-                                        Thème sombre
-                                    </button>
-                                    <button onclick="setTheme('auto')" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-adjust mr-2 text-gray-500"></i>
-                                        Automatique
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Menu Paramètres -->
-                        <div class="relative">
-                            <button onclick="toggleDropdown('settingsMenu')" class="p-2 hover:bg-gray-200 rounded-full" title="Paramètres">
-                                <i class="fas fa-cog text-gray-600"></i>
-                            </button>
-                            <div id="settingsMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                                <div class="py-2">
-                                    <button onclick="openProfile()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-user mr-2 text-gray-500"></i>
-                                        Profil
-                                    </button>
-                                    <button onclick="openSettings()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-cog mr-2 text-gray-500"></i>
-                                        Paramètres
-                                    </button>
-                                    <button onclick="openNotifications()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-bell mr-2 text-gray-500"></i>
-                                        Notifications
-                                    </button>
-                                    <button onclick="openPrivacy()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-lock mr-2 text-gray-500"></i>
-                                        Confidentialité
-                                    </button>
-                                    <div class="border-t border-gray-200 my-1"></div>
-                                    <button onclick="openHelp()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-question-circle mr-2 text-gray-500"></i>
-                                        Aide
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Bouton Déconnexion (sans menu) -->
                         <button id="logoutBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Déconnexion">
                             <i class="fas fa-sign-out-alt text-gray-600"></i>
@@ -237,8 +177,22 @@
                         type="text"
                         id="searchInput"
                         placeholder="Rechercher ou commencer une nouvelle discussion"
-                        class="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
+                        class="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
+                <!-- Boutons pour la compatibilité avec main.js -->
+                <div class="flex justify-around mt-4 space-x-2">
+                    <button id="allButton" class="flex-1 bg-green-500 hover:bg-green-600 text-white p-2 rounded-full text-sm font-medium">
+                        <i class="fas fa-user-plus mr-1"></i> Tous
+                    </button>
+                    <button id="readButton" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full text-sm font-medium">
+                        <i class="fas fa-envelope-open mr-1"></i> Lu
+                    </button>
+                    <button id="unreadButton" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full text-sm font-medium">
+                        <i class="fas fa-envelope mr-1"></i> Non lu
+                    </button>
+                    <button id="groupButton" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full text-sm font-medium">
+                        <i class="fas fa-users mr-1"></i> Groupe
+                    </button>
                 </div>
             </div>
 
@@ -304,38 +258,33 @@
                 </div>
 
                 <!-- Messages -->
-                <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-gray-50" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8cmVjdCB3aWR0aD0iMzAiIGhlaWdodD0iMzAiIGZpbGw9InJnYmEoMCwwLDAsMC4wMikiLz4KICAgICAgPGNpcmNsZSBjeD0iMTUiIGN5PSIxNSIgcj0iMS41IiBmaWxsPSJyZ2JhKDAsMCwwLDAuMDUpIi8+CiAgICA8L3BhdHRlcm4+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz4KPC9zdmc+');">
-                    <div id="messagesList" class="space-y-4"></div>
+                <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-gray-50">
+                    <div id="messagesList" class="space-y-2"></div>
                 </div>
 
-                <!-- Zone de saisie modifiée pour supporter la diffusion -->
-                <div id="messageInputContainer" class="bg-gray-50 p-4 border-t border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center space-x-3">
-                        <button class="p-2 hover:bg-gray-200 rounded-full transition-colors">
-                            <i class="fas fa-paperclip text-gray-600"></i>
-                        </button>
-                        <div class="flex-1 relative">
-                            <input
-                                type="text"
-                                id="messageInput"
-                                placeholder="Tapez un message"
-                                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
-                                onkeypress="if(event.key==='Enter') {broadcastMode ? sendBroadcastMessage() : sendMessage()}"
-                                oninput="updateSendButton()"
-                            />
-                        </div>
-                        <button id="sendBtn" onclick="sendMessage()" class="p-3 bg-green-500 hover:bg-green-600 rounded-full transition-colors">
-                            <i id="sendIcon" class="fas fa-microphone text-white"></i>
-                        </button>
-                    </div>
+                <!-- Zone de saisie message -->
+                <div class="bg-gray-50 p-4 border-t border-gray-200 flex items-center space-x-3">
+                    <button class="p-2 hover:bg-gray-200 rounded-full">
+                        <i class="fas fa-plus-circle text-gray-600 text-xl"></i>
+                    </button>
+                    <input
+                        type="text"
+                        id="messageInput"
+                        placeholder="Tapez votre message..."
+                        class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <button id="sendBtn" class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <i id="sendIcon" class="fas fa-microphone text-white"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
- <script src="event.js"></script>
-<script src="controller.js"></script>
-<script src="src/app.js"></script>
-<script src="src/main.js"></script>
 
+    <!-- Scripts JS -->
+    <script src="src/app.js"></script>
+    <script src="event.js"></script>
+    <script src="controller.js"></script>
+    <script src="src/gesContact.js"></script>
+    <script src="src/main.js"></script>
 </body>
 </html>
