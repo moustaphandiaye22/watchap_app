@@ -120,7 +120,7 @@ const addContact = (nom, prenom, numero) => {
     };
     AppState.appData.contacts.push(newContact);
     AppState.appData.messages[newContact.id] = [];
-    AppState.saveData();
+    // AppState.saveData();
     renderContacts();
     console.log('Contact ajouté:', newContact);
     return newContact;

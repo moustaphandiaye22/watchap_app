@@ -157,9 +157,9 @@ function toggleDropdown(menuId) {
 
 
 
-Object.entries(menuActions).forEach(([name, fn]) => {
-    window[name] = (...args) => { fn(...args); $("broadcastMenu")?.classList.add("hidden"); $("themeMenu")?.classList.add("hidden"); $("settingsMenu")?.classList.add("hidden"); openMenu = null; };
-});
+// Object.entries(menuActions).forEach(([name, fn]) => {
+//     window[name] = (...args) => { fn(...args); $("broadcastMenu")?.classList.add("hidden"); $("themeMenu")?.classList.add("hidden"); $("settingsMenu")?.classList.add("hidden"); openMenu = null; };
+// });
 
 // CSS et initialisation
 const darkCSS = `.dark{background-color:#1f2937;color:#f9fafb}.dark .bg-white{background-color:#374151!important;color:#f9fafb}.dark .bg-gray-50{background-color:#4b5563!important}.dark .bg-gray-100{background-color:#6b7280!important}.dark .bg-gray-200{background-color:#9ca3af!important}.dark .text-gray-800{color:#f9fafb!important}.dark .text-gray-600{color:#d1d5db!important}.dark .text-gray-500{color:#9ca3af!important}.dark .border-gray-100{border-color:#4b5563!important}.dark .border-gray-200{border-color:#6b7280!important}.dark input,.dark textarea,.dark select{background-color:#4b5563!important;color:#f9fafb!important;border-color:#6b7280!important}.dark .shadow-sm{box-shadow:0 1px 2px 0 rgba(0,0,0,0.3)!important}`;
