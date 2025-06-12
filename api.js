@@ -35,7 +35,13 @@ app.post('/data', (req, res) => {
                 data = [];
             }
         }
+        const existe = data.some(item =>
+            item.nom === req.body.nom && item.prenom === req.body.prenom
+        );
 
+        if (existe) {
+            return res.status(409).json({ error: 'Donnée déjà existante' });
+        }
         data.push(req.body); // Ajoute la nouvelle donnée
 
         fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2), 'utf8', (err) => {

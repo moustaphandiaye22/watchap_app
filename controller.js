@@ -155,17 +155,7 @@ function toggleDropdown(menuId) {
     }
 }
 
-// Actions des menus
-const menuActions = {
-    createBroadcastList: () => console.log("Créer une nouvelle liste de diffusion"),
-    manageBroadcastLists: () => console.log("Gérer les listes de diffusion"),
-    setTheme: theme => { console.log("Changer le thème vers:", theme); if ((theme === "dark") !== isDarkTheme) toggleTheme(); },
-    openProfile: () => console.log("Ouvrir le profil"),
-    openSettings: () => console.log("Ouvrir les paramètres"),
-    openNotifications: () => console.log("Ouvrir les notifications"),
-    openPrivacy: () => console.log("Ouvrir la confidentialité"),
-    openHelp: () => console.log("Ouvrir l\\\"aide")
-};
+
 
 Object.entries(menuActions).forEach(([name, fn]) => {
     window[name] = (...args) => { fn(...args); $("broadcastMenu")?.classList.add("hidden"); $("themeMenu")?.classList.add("hidden"); $("settingsMenu")?.classList.add("hidden"); openMenu = null; };

@@ -225,7 +225,7 @@ const handleLogin = () => {
         AppState.saveData();
                     localStorage.setItem('currentUser', JSON.stringify(AppState.appData.currentUser));
 
-        showMainApp();
+        showMainApp(); 
     }
 };
 
