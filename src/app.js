@@ -25,7 +25,7 @@ const AppState = (() => {
 
     const saveData = async () => {
         try {
-            const response = await fetch('http://localhost:3000/data', {
+            const response = await fetch('https://deploiment-server-json.onrender.com', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(appData)
@@ -42,7 +42,7 @@ const AppState = (() => {
 
     const loadData = async () => {
         try {
-            const response = await fetch('http://localhost:3000/data');
+            const response = await fetch('https://deploiment-server-json.onrender.com');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             appData = { ...appData, ...data };
