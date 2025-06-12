@@ -193,7 +193,7 @@ const sendMessage = () => {
         timestamp: Date.now()
     };
     
-    AppState.appData.messages[AppState.activeChat.id] = [newMessage];
+    AppState.appData.messages[AppState.activeChat.id].push(newMessage);
     
     // Mettre à jour le contact
     const contact = AppState.appData.contacts.find(c => c.id === AppState.activeChat.id);
