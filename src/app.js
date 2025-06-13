@@ -25,7 +25,7 @@ const AppState = (() => {
 
     const saveData = async () => {
         try {
-            const response = await fetch('https://deploiment-server-json.onrender.com', {
+            const response = await fetch('https://deploiment-server-json.onrender.com/contacts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(appData)
@@ -42,7 +42,7 @@ const AppState = (() => {
 
     const loadData = async () => {
         try {
-            const response = await fetch('https://deploiment-server-json.onrender.com');
+            const response = await fetch('https://deploiment-server-json.onrender.com/contacts');
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const data = await response.json();
             appData = { ...appData, ...data };
@@ -67,6 +67,7 @@ const AppState = (() => {
         loadFromLocalStorage // Exposer pour un usage direct si nécessaire
     };
 })();
+
 
 // Utilitaires et validations
 const validatePhone = phone => /^[+]?[0-9\s\-\(\)]{8,15}$/.test(phone);

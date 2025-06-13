@@ -68,139 +68,11 @@
             bottom: 0;
             z-index: 40;
         }
-        
         .error-message {
             color: red;
             font-size: 0.875rem;
             display: block;
             margin-top: 0.25rem;
-        }
-
-        /* Styles pour les notifications */
-        .notification {
-            transform: translateX(100%);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        /* Styles pour la sidebar */
-        #sidebarMenu {
-            backdrop-filter: blur(10px);
-        }
-
-        /* Styles pour les modales */
-        .modal-overlay {
-            backdrop-filter: blur(4px);
-        }
-
-        /* Responsive design pour mobile */
-        @media (max-width: 768px) {
-            #mainApp {
-                margin-left: 0;
-            }
-            
-            #sidebarMenu {
-                width: 16rem;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            #sidebarMenu.open {
-                transform: translateX(0);
-            }
-        }
-
-        /* Styles pour les tooltips */
-        .tooltip {
-            visibility: hidden;
-            opacity: 0;
-            position: absolute;
-            z-index: 1000;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            white-space: nowrap;
-            transition: all 0.2s ease;
-        }
-
-        .tooltip.show {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Styles pour les badges de statut */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .status-badge.blocked {
-            background-color: #fef2f2;
-            color: #dc2626;
-        }
-
-        .status-badge.archived {
-            background-color: #f3f4f6;
-            color: #6b7280;
-        }
-
-        .status-badge.online {
-            background-color: #dcfce7;
-            color: #16a34a;
-        }
-
-        /* Animation de survol pour les contacts */
-        .contact-item {
-            transition: all 0.2s ease;
-        }
-
-        .contact-item:hover {
-            background-color: #f9fafb;
-            transform: translateX(2px);
-        }
-
-        /* Styles pour le mode sombre */
-        .dark {
-            color-scheme: dark;
-        }
-        
-        .dark body {
-            background-color: #111827;
-            color: #f9fafb;
-        }
-        
-        .dark .bg-white {
-            background-color: #1f2937;
-        }
-        
-        .dark .bg-gray-50 {
-            background-color: #374151;
-        }
-        
-        .dark .bg-gray-100 {
-            background-color: #4b5563;
-        }
-        
-        .dark .text-gray-800 {
-            color: #f9fafb;
-        }
-        
-        .dark .text-gray-600 {
-            color: #d1d5db;
-        }
-        
-        .dark .border-gray-200 {
-            border-color: #4b5563;
-        }
-        
-        .dark .border-gray-300 {
-            border-color: #6b7280;
         }
     </style>
 </head>
@@ -267,10 +139,36 @@
                     <div class="flex items-center space-x-3">
                         <span class="font-semibold text-gray-800">Mon WhatsApp</span>
                     </div>
-                    <!-- Bouton menu mobile -->
-                    <button id="mobileMenuBtn" class="md:hidden p-2 hover:bg-gray-200 rounded-full">
-                        <i class="fas fa-bars text-gray-600"></i>
-                    </button>
+                    <!-- Barre d'outils supérieure avec menus déroulants -->
+                    <div class="flex items-center space-x-2 relative">
+                        <!-- Menu Diffusion -->
+                        <div class="relative">
+                            <button id="broadcastBtn" onclick="toggleDropdown('broadcastMenu')" class="p-2 hover:bg-gray-200 rounded-full" title="Mode diffusion">
+                                <i class="fas fa-broadcast-tower text-gray-600"></i>
+                            </button>
+                            <div id="broadcastMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                <div class="py-2">
+                                    <button onclick="toggleBroadcastMode()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-broadcast-tower mr-2 text-gray-500"></i>
+                                        Activer la diffusion
+                                    </button>
+                                    <button onclick="createBroadcastList()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-list mr-2 text-gray-500"></i>
+                                        Nouvelle liste
+                                    </button>
+                                    <button onclick="manageBroadcastLists()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
+                                        <i class="fas fa-edit mr-2 text-gray-500"></i>
+                                        Gérer les listes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bouton Déconnexion (sans menu) -->
+                        <button id="logoutBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Déconnexion">
+                            <i class="fas fa-sign-out-alt text-gray-600"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="relative">
@@ -281,46 +179,43 @@
                         placeholder="Rechercher ou commencer une nouvelle discussion"
                         class="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
                 </div>
-                
-                <!-- Boutons de filtrage -->
+                <!-- Boutons pour la compatibilité avec main.js -->
                 <div class="flex justify-around mt-4 space-x-2">
-                    <button id="allButton" class="flex-1 bg-green-500 hover:bg-green-600 text-white p-2 rounded-full text-sm font-medium transition-colors">
-                        <i class="fas fa-user-friends mr-1"></i> Tous
+                    <button id="allButton" class="flex-1 bg-green-500 hover:bg-green-600 text-white p-2 rounded-full text-sm font-medium">
+                        <i class="fas fa-user-plus mr-1"></i> Tous
                     </button>
-                    <button id="readButton" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full text-sm font-medium transition-colors">
+                    <button id="readButton" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full text-sm font-medium">
                         <i class="fas fa-envelope-open mr-1"></i> Lu
                     </button>
-                    <button id="unreadButton" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full text-sm font-medium transition-colors">
+                    <button id="unreadButton" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full text-sm font-medium">
                         <i class="fas fa-envelope mr-1"></i> Non lu
                     </button>
-                    <button id="groupButton" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full text-sm font-medium transition-colors">
+                    <button id="groupButton" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full text-sm font-medium">
                         <i class="fas fa-users mr-1"></i> Groupe
                     </button>
                 </div>
             </div>
 
             <!-- Panel de contrôle pour la diffusion (caché par défaut) -->
-            <div id="broadcastPanel" class="hidden bg-blue-50 border border-blue-200 p-3 rounded mx-4 mb-2">
+            <div id="broadcastPanel" class="hidden bg-gray-50 dark:bg-gray-700 p-3 rounded mx-4 mb-2 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm font-medium text-blue-700">Mode Diffusion</span>
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Mode Diffusion</span>
                     <button onclick="toggleBroadcastMode()" class="text-red-500 hover:text-red-700 text-xs">
                         <i class="fas fa-times"></i> Quitter
                     </button>
                 </div>
                 <div class="flex space-x-2">
-                    <button onclick="selectAllContacts()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-colors">
+                    <button onclick="selectAllContacts()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
                         Tout sélectionner
                     </button>
-                    <button onclick="deselectAllContacts()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs transition-colors">
+                    <button onclick="deselectAllContacts()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
                         Tout désélectionner
                     </button>
                 </div>
             </div>
 
             <!-- Liste des conversations -->
-            <div id="contactsList" class="flex-1 overflow-y-auto">
-                <!-- Les contacts seront générés dynamiquement par JavaScript -->
-            </div>
+            <div id="contactsList" class="flex-1 overflow-y-auto"></div>
         </div>
 
         <!-- Zone de chat -->
@@ -350,61 +245,34 @@
                         </div>
                     </div>
                     <div class="flex space-x-2">
-                        <button id="videocallBtn" class="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Appel vidéo">
+                        <button class="p-2 hover:bg-gray-200 rounded-full">
                             <i class="fas fa-video text-gray-600"></i>
                         </button>
-                        <button id="audiocallBtn" class="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Appel audio">
+                        <button class="p-2 hover:bg-gray-200 rounded-full">
                             <i class="fas fa-phone text-gray-600"></i>
                         </button>
-                        <div class="relative">
-                            <button id="chatOptionsBtn" onclick="toggleDropdown('chatOptionsMenu')" class="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Options">
-                                <i class="fas fa-ellipsis-v text-gray-600"></i>
-                            </button>
-                            <div id="chatOptionsMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                                <div class="py-2">
-                                    <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-info-circle mr-2 text-gray-500"></i>
-                                        Infos du contact
-                                    </button>
-                                    <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-search mr-2 text-gray-500"></i>
-                                        Rechercher
-                                    </button>
-                                    <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-archive mr-2 text-gray-500"></i>
-                                        Archiver
-                                    </button>
-                                    <button class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-red-600">
-                                        <i class="fas fa-ban mr-2"></i>
-                                        Bloquer
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <button class="p-2 hover:bg-gray-200 rounded-full">
+                            <i class="fas fa-ellipsis-v text-gray-600"></i>
+                        </button>
                     </div>
                 </div>
 
                 <!-- Messages -->
                 <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-gray-50">
-                    <div id="messagesList" class="space-y-2">
-                        <!-- Les messages seront générés dynamiquement par JavaScript -->
-                    </div>
+                    <div id="messagesList" class="space-y-2"></div>
                 </div>
 
                 <!-- Zone de saisie message -->
-                <div class="bg-gray-50 p-4 border-t border-gray-200 flex items-center space-x-3">
-                    <button id="attachBtn" class="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Joindre un fichier">
-                        <i class="fas fa-paperclip text-gray-600 text-xl"></i>
+                <div class="bg-gray-50 p-4 border-t border-gray-200 flex h-auto items-center space-x-3">
+                    <button class="p-2 hover:bg-gray-200 rounded-full">
+                        <i class="fas fa-plus-circle text-gray-600 text-xl"></i>
                     </button>
                     <input
                         type="text"
                         id="messageInput"
                         placeholder="Tapez votre message..."
-                        class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
-                    <button id="emojiBtn" class="p-2 hover:bg-gray-200 rounded-full transition-colors" title="Emoji">
-                        <i class="fas fa-smile text-gray-600"></i>
-                    </button>
-                    <button id="sendBtn" class="w-10 h-10 bg-green-500 hover:bg-green-600 rounded-full flex items-center justify-center transition-colors">
+                        class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <button id="sendBtn" class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                         <i id="sendIcon" class="fas fa-microphone text-white"></i>
                     </button>
                 </div>
@@ -412,14 +280,11 @@
         </div>
     </div>
 
-    <!-- Conteneur pour les modales -->
-    <div id="modalContainer"></div>
-
     <!-- Scripts JS -->
-    <script type="module" src="controller.js" ></script>
-    <script type="module" src="event.js" ></script>
-    <script  type="module" src="src/app.js" ></script>
-    <script type="module" src="src/main.js" ></script>
-    <script type="module" src="src/gesContact.js" ></script>
+    <script type="module"  src="src/app.js"></script>
+    <script type="module" src="event.js"></script>
+    <script type="module" src="controller.js"></script>
+    <script type="module" src="src/gesContact.js"></script>
+    <script type="module" src="src/main.js"></script>
 </body>
-</html>
+</html> 

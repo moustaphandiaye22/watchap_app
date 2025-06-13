@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         });
         const currentUser= localStorage.getItem("currentUser")
-        if(currentUser) showMainApp();
+        // if(currentUser) showMainApp();
     }
 
     // Interface principale
@@ -56,8 +56,8 @@ function addQuickActionButtons() {
     if (!header) return;
 
     const buttons = [
-        { icon: "fa-user-plus", title: "Ajouter un contact (Ctrl+N)", action: showAddContactForm },
-        { icon: "fa-users", title: "Créer un groupe (Ctrl+G)", action: showCreateGroupForm },
+        // { icon: "fa-user-plus", title: "Ajouter un contact (Ctrl+N)", action: showAddContactForm },
+        // { icon: "fa-users", title: "Créer un groupe (Ctrl+G)", action: showCreateGroupForm },
         { icon: "fa-archive", title: "Voir les conversations archivées", action: showArchivedChats },
         { icon: "fa-ban", title: "Voir les contacts bloqués", action: showBlockedContacts },
     ];
