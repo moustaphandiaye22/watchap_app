@@ -5,126 +5,289 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp Clone</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="src/index.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Styles CSS additionnels pour une meilleure intégration -->
     <style>
-        /* Animations pour les transitions */
-        .broadcast-selected {
-            transform: scale(0.98);
-            transition: transform 0.1s ease;
+        /* Styles personnalisés pour WhatsApp */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        .whatsapp-green { background-color: #00a884; }
+        .whatsapp-green-hover:hover { background-color: #008069; }
+        .whatsapp-green-light { background-color: #d1f2eb; }
+        .whatsapp-gray { background-color: #f0f2f5; }
+        
+        .chat-bubble-sent {
+            background: linear-gradient(135deg, #dcf8c6 0%, #d4f2bc 100%);
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
         }
-
-        .broadcast-contact {
-            transition: all 0.2s ease;
+        .chat-bubble-received {
+            background: #ffffff;
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
         }
-
-        .broadcast-contact:hover {
-            transform: translateX(4px);
+        
+        .contact-item {
+            transition: all 0.15s ease;
+            border-radius: 0;
+        } 
+        .contact-item:hover { background-color: #f5f6f6; }
+        .contact-item.active { 
+            background-color: #e9edef; 
+            border-left: 3px solid #00a884; 
         }
-
-        /* Amélioration de l'apparence du mode sombre */
-        .dark .bg-green-50 {
-            background-color: #065f46 !important;
-            border-color: #059669 !important;
+        
+        .search-input { 
+            background-color: #f0f2f5; 
+            border: 1px solid #e9edef; 
+            border-radius: 8px; 
         }
-
-        .dark .bg-blue-50 {
-            background-color: #1e3a8a !important;
-            border-color: #3b82f6 !important;
+        .search-input:focus { 
+            background-color: #ffffff; 
+            border-color: #00a884; 
+            box-shadow: 0 0 0 1px #00a884; 
         }
-
-        /* Indicateur de diffusion dans les messages */
-        .broadcast-message::after {
-            content: "📡";
-            font-size: 0.8em;
-            opacity: 0.6;
-            margin-left: 4px;
+        
+        .header-gradient { 
+            background: linear-gradient(135deg, #00a884 0%, #008069 100%);
         }
-
-        /* Styles pour les menus déroulants */
-        .dropdown-menu {
-            animation: fadeIn 0.15s ease-out;
+        .sidebar-gradient { 
+            background: linear-gradient(180deg, #00a884 0%, #008069 100%); 
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        
+        .message-time { 
+            font-size: 11px; 
+            color: #667781; 
+            margin-top: 2px;
         }
-
-        /* Fermeture automatique des menus au clic extérieur */
-        .dropdown-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 40;
+        
+        .status-indicator { 
+            width: 8px; 
+            height: 8px; 
+            border-radius: 50%;
+            display: inline-block; 
+            margin-right: 6px; 
         }
-        .error-message {
-            color: red;
-            font-size: 0.875rem;
-            display: block;
-            margin-top: 0.25rem;
+        .status-online { background-color: #4ade80; }
+        .status-offline { background-color: #9ca3af; }
+        
+        .chat-background {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e5ddd5' fill-opacity='0.4' fill-rule='nonzero'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-color: #efeae2;
         }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { 
+            background: rgba(0,0,0,0.2); 
+            border-radius: 3px; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { 
+            background: rgba(0,0,0,0.3); 
+        }
+        
+        .filter-button { 
+            background: #ffffff; 
+            border: 1px solid #e9edef; 
+            color: #667781; 
+            transition: all 0.15s ease; 
+            border-radius: 18px; 
+            font-weight: 500; 
+        }
+        .filter-button:hover { 
+            background: #f5f6f6; 
+            border-color: #00a884; 
+        }
+        .filter-button.active { 
+            background: #00a884; 
+            color: #ffffff; 
+            border-color: #00a884; 
+        }
+        
+        .profile-pic { 
+            border: 2px solid #e9edef; 
+            transition: border-color 0.15s ease; 
+        }
+        .profile-pic:hover { 
+            border-color: #00a884; 
+        }
+        
+        .login-gradient { 
+            background: linear-gradient(135deg, #00a884 0%, #25d366 50%, #128c7e 100%); 
+        }
+        .login-card { 
+            backdrop-filter: blur(10px); 
+            background: rgba(255,255,255,0.95); 
+            border: 1px solid rgba(255,255,255,0.2); 
+        }
+        
+        .sidebar-tooltip { 
+            opacity: 0; 
+            transform: translateX(-10px); 
+            transition: all 0.2s ease; 
+        }
+        .sidebar-item:hover .sidebar-tooltip { 
+            opacity: 1; 
+            transform: translateX(0); 
+        }
+        
+        .message-input-container { 
+            background-color: #f0f2f5; 
+            padding: 10px 16px; 
+        }
+        .message-input { 
+            background-color: #ffffff; 
+            border-radius: 21px; 
+            border: 1px solid transparent; 
+            transition: all 0.15s ease; 
+        }
+        .message-input:focus { 
+            border-color: #00a884; 
+            box-shadow: 0 0 0 1px #00a884; 
+        }
+        
+        .send-button { 
+            background: linear-gradient(135deg, #00a884 0%, #008069 100%);
+            transition: all 0.2s ease; 
+        }
+        .send-button:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 4px 12px rgba(0,168,132,0.3); 
+        }
+        
+        .emoji-button, .attachment-button { 
+            color: #8696a0; 
+            transition: color 0.15s ease; 
+        }
+        .emoji-button:hover, .attachment-button:hover { 
+            color: #54656f;
+        }
+        
+        .error-message { 
+            color: red; 
+            font-size: 0.875rem; 
+            display: block; 
+            margin-top: 0.25rem; 
+        }
+        
+        .dropdown-menu { 
+            animation: fadeIn 0.15s ease-out; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .attachment-menu { 
+            background: #ffffff; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
+            border: 1px solid #e9edef;
+        }
+        .attachment-item { 
+            transition: all 0.15s ease; 
+        }
+        .attachment-item:hover { 
+            background-color: #f5f6f6; 
+            transform: translateX(2px); 
+        }
+        
+        .chat-header-shadow { 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12); 
+        }
+        
+        /* Mode sombre */
+        .dark { background-color: #1f2937; color: #f9fafb; }
+        .dark .bg-white { background-color: #374151 !important; color: #f9fafb; }
+        .dark .bg-gray-50 { background-color: #4b5563 !important; }
+        .dark .bg-gray-100 { background-color: #6b7280 !important; }
+        .dark .bg-gray-200 { background-color: #9ca3af !important; }
+        .dark .text-gray-800 { color: #f9fafb !important; }
+        .dark .text-gray-600 { color: #d1d5db !important; }
+        .dark .text-gray-500 { color: #9ca3af !important; }
+        .dark .border-gray-100 { border-color: #4b5563 !important; }
+        .dark .border-gray-200 { border-color: #6b7280 !important; }
+        .dark input, .dark textarea, .dark select { 
+            background-color: #4b5563 !important; 
+            color: #f9fafb !important; 
+            border-color: #6b7280 !important; 
+        }
+        .dark .whatsapp-gray { background-color: #2a2f32; }
+        .dark .contact-item:hover { background-color: #2a2f32; }
+        .dark .contact-item.active { background-color: #2a2f32; border-left-color: #00a884; }
+        .dark .search-input { background-color: #2a2f32; border-color: #3b4a54; color: #d1d7db; }
+        .dark .message-input { background-color: #2a2f32; color: #d1d7db; }
+        .dark .chat-background { background-color: #0b141a; }
     </style>
 </head>
 <body class="bg-gray-100">
     <!-- Page de connexion -->
-    <div id="loginPage" class="min-h-screen bg-gradient-to-br from-green-400 via-green-500 to-green-600 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+    <div id="loginPage" class="min-h-screen login-gradient flex items-center justify-center p-4">
+        <div class="login-card rounded-2xl shadow-2xl p-8 w-full max-w-md">
             <div class="text-center mb-8">
-                <div class="bg-green-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-comment text-white text-3xl"></i>
+                <div class="whatsapp-green w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fab fa-whatsapp text-white text-4xl"></i>
                 </div>
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">WhatsApp</h1>
                 <p id="loginSubtitle" class="text-gray-600">Entrez votre numéro de téléphone</p>
             </div>
-
             <div class="space-y-6">
                 <div id="phoneStep">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Numéro de téléphone</label>
                     <div class="relative">
-                        <span class="absolute left-3 top-3 text-gray-500">🇸🇳 +221</span>
-                        <input
-                            type="tel"
-                            id="phoneInput"
-                            class="w-full pl-20 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            placeholder="77 777 77 77">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">🇸🇳 +221</span>
+                        <input type="tel" id="phoneInput" class="w-full pl-24 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200" placeholder="77 777 77 77">
                         <small id="errorPhoneInput" class="error-message hidden"></small>
                     </div>
                 </div>
-
                 <div id="verifyStep" class="hidden">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Code de vérification</label>
-                    <input
-                        type="text"
-                        id="codeInput"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-center text-2xl tracking-widest outline-none"
-                        placeholder="- - - - - -"
-                        maxlength="6">
-                    <small id="errorcodeInput" class="error-message hidden"></small>
+                    <input type="text" id="codeInput" class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 text-center text-2xl tracking-widest outline-none transition-all duration-200" placeholder="- - - - - -" maxlength="6">
+                    <small id="errorCodeInput" class="error-message hidden"></small>
                     <p id="phoneNumber" class="text-sm text-gray-500 mt-2 text-center"></p>
                 </div>
+                <button id="loginBtn" class="w-full whatsapp-green whatsapp-green-hover text-white font-semibold py-4 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg">Continuer</button>
+                <button id="changeNumberBtn" class="w-full text-green-600 hover:text-green-700 font-medium py-2 hidden transition-colors duration-200">Changer le numéro</button>
+            </div>
+        </div>
+    </div>
 
-                <button
-                    id="loginBtn"
-                    class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105">
-                    Continuer
+    <!-- Sidebar Menu -->
+    <div id="sidebarMenu" class="fixed top-0 left-0 h-full w-20 sidebar-gradient shadow-xl z-50 flex flex-col justify-between items-center py-6 hidden">
+        <div class="flex flex-col items-center space-y-4">
+            <div class="sidebar-item relative group">
+                <div id="userAvatar" class="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm text-white flex items-center justify-center text-xl font-bold cursor-pointer hover:bg-white/30 transition-all duration-200 shadow-lg profile-pic" title="Mon profil">👤</div>
+                <div class="sidebar-tooltip absolute left-16 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap pointer-events-none z-10">Mon profil</div>
+            </div>
+            <div class="w-8 h-px bg-white/30 my-2"></div>
+            <div class="sidebar-item relative group">
+                <button class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 bg-white text-green-600 shadow-lg hover:shadow-xl hover:scale-105" onclick="showNotification('Discussions actives', 'info')">
+                    <i class="fas fa-comment-dots text-lg"></i>
                 </button>
-
-                <button
-                    id="changeNumberBtn"
-                    class="w-full text-green-500 hover:text-green-600 font-medium py-2 hidden">
-                    Changer le numéro
+                <div class="sidebar-tooltip absolute left-16 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap pointer-events-none z-10">Discussions</div>
+            </div>
+            <div class="sidebar-item relative group">
+                <button class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 text-white/80 hover:bg-white/20 hover:text-white hover:scale-105" onclick="showAddContactForm()">
+                    <i class="fas fa-user-plus text-lg"></i>
                 </button>
+                <div class="sidebar-tooltip absolute left-16 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap pointer-events-none z-10">Ajouter un contact</div>
+            </div>
+            <div class="sidebar-item relative group">
+                <button class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 text-white/80 hover:bg-white/20 hover:text-white hover:scale-105" onclick="showCreateGroupForm()">
+                    <i class="fas fa-users text-lg"></i>
+                </button>
+                <div class="sidebar-tooltip absolute left-16 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap pointer-events-none z-10">Créer un groupe</div>
+            </div>
+        </div>
+        <div class="flex flex-col items-center space-y-4">
+            <div class="sidebar-item relative group">
+                <button class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 text-white/80 hover:bg-white/20 hover:text-white hover:scale-105" onclick="toggleTheme()">
+                    <i id="themeIcon" class="fas fa-moon text-lg"></i>
+                </button>
+                <div class="sidebar-tooltip absolute left-16 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap pointer-events-none z-10">Mode sombre</div>
+            </div>
+            <div class="sidebar-item relative group">
+                <button class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 text-white/80 hover:bg-red-500/20 hover:text-red-300" onclick="logout()">
+                    <i class="fas fa-sign-out-alt text-lg"></i>
+                </button>
+                <div class="sidebar-tooltip absolute left-16 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap pointer-events-none z-10">Déconnexion</div>
             </div>
         </div>
     </div>
@@ -134,157 +297,132 @@
         <!-- Sidebar -->
         <div class="w-1/3 bg-white border-r border-gray-200 flex flex-col">
             <!-- Header -->
-            <div class="bg-gray-50 p-4 border-b border-gray-200">
+            <div class="whatsapp-gray p-4 border-b border-gray-200">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center space-x-3">
-                        <span class="font-semibold text-gray-800">Mon WhatsApp</span>
+                        <div class="w-10 h-10 whatsapp-green rounded-full flex items-center justify-center text-white font-bold shadow-sm">
+                            <i class="fab fa-whatsapp text-lg"></i>
+                        </div>
+                        <span class="font-semibold text-gray-800">WhatsApp</span>
                     </div>
-                    <!-- Barre d'outils supérieure avec menus déroulants -->
                     <div class="flex items-center space-x-2 relative">
-                        <!-- Menu Diffusion -->
                         <div class="relative">
-                            <button id="broadcastBtn" onclick="toggleDropdown('broadcastMenu')" class="p-2 hover:bg-gray-200 rounded-full" title="Mode diffusion">
+                            <button id="broadcastBtn" onclick="toggleDropdown('broadcastMenu')" class="p-2 hover:bg-gray-200 rounded-full transition-colors duration-150" title="Mode diffusion">
                                 <i class="fas fa-broadcast-tower text-gray-600"></i>
                             </button>
-                            <div id="broadcastMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                            <div id="broadcastMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50 attachment-menu dropdown-menu">
                                 <div class="py-2">
-                                    <button onclick="toggleBroadcastMode()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-broadcast-tower mr-2 text-gray-500"></i>
-                                        Activer la diffusion
-                                    </button>
-                                    <button onclick="createBroadcastList()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-list mr-2 text-gray-500"></i>
-                                        Nouvelle liste
-                                    </button>
-                                    <button onclick="manageBroadcastLists()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm">
-                                        <i class="fas fa-edit mr-2 text-gray-500"></i>
-                                        Gérer les listes
+                                    <button onclick="toggleBroadcastMode()" class="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm attachment-item">
+                                        <i class="fas fa-broadcast-tower mr-2 text-gray-500"></i>Activer la diffusion
                                     </button>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Bouton Déconnexion (sans menu) -->
-                        <button id="logoutBtn" class="p-2 hover:bg-gray-200 rounded-full" title="Déconnexion">
+                        <button id="logoutBtn" class="p-2 hover:bg-gray-200 rounded-full transition-colors duration-150" title="Déconnexion">
                             <i class="fas fa-sign-out-alt text-gray-600"></i>
                         </button>
                     </div>
                 </div>
-                
-                <div class="relative">
-                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-                    <input
-                        type="text"
-                        id="searchInput"
-                        placeholder="Rechercher ou commencer une nouvelle discussion"
-                        class="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                <div class="relative mb-4">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Rechercher ou commencer une nouvelle discussion" class="w-full pl-10 pr-4 py-3 search-input focus:outline-none transition-all duration-200">
                 </div>
-                <!-- Boutons pour la compatibilité avec main.js -->
-                <div class="flex justify-around mt-4 space-x-2">
-                    <button id="allButton" class="flex-1 bg-green-500 hover:bg-green-600 text-white p-2 rounded-full text-sm font-medium">
-                        <i class="fas fa-user-plus mr-1"></i> Tous
+                <div class="flex gap-2">
+                    <button id="allButton" class="filter-button active px-4 py-2 text-sm font-medium rounded-2xl">
+                        <i class="fas fa-comments mr-1"></i> Tous
                     </button>
-                    <button id="readButton" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full text-sm font-medium">
+                    <button id="readButton" class="filter-button px-4 py-2 text-sm font-medium rounded-2xl">
                         <i class="fas fa-envelope-open mr-1"></i> Lu
                     </button>
-                    <button id="unreadButton" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full text-sm font-medium">
+                    <button id="unreadButton" class="filter-button px-4 py-2 text-sm font-medium rounded-2xl">
                         <i class="fas fa-envelope mr-1"></i> Non lu
                     </button>
-                    <button id="groupButton" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full text-sm font-medium">
+                    <button id="groupButton" class="filter-button px-4 py-2 text-sm font-medium rounded-2xl">
                         <i class="fas fa-users mr-1"></i> Groupe
                     </button>
                 </div>
             </div>
 
-            <!-- Panel de contrôle pour la diffusion (caché par défaut) -->
-            <div id="broadcastPanel" class="hidden bg-gray-50 dark:bg-gray-700 p-3 rounded mx-4 mb-2 border-b border-gray-200 dark:border-gray-700">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Mode Diffusion</span>
-                    <button onclick="toggleBroadcastMode()" class="text-red-500 hover:text-red-700 text-xs">
-                        <i class="fas fa-times"></i> Quitter
+            <!-- Panel de contrôle pour la diffusion -->
+            <div id="broadcastPanel" class="hidden whatsapp-green-light p-4 border-b border-gray-200">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-medium text-gray-700">Mode Diffusion</span>
+                    <button onclick="toggleBroadcastMode()" class="text-red-500 hover:text-red-700 text-sm font-medium">
+                        <i class="fas fa-times mr-1"></i> Quitter
                     </button>
                 </div>
                 <div class="flex space-x-2">
-                    <button onclick="selectAllContacts()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">
-                        Tout sélectionner
-                    </button>
-                    <button onclick="deselectAllContacts()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs">
-                        Tout désélectionner
-                    </button>
+                    <button onclick="selectAllContacts()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-150">Tout sélectionner</button>
+                    <button onclick="deselectAllContacts()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-150">Tout désélectionner</button>
                 </div>
             </div>
-
-            <!-- Liste des conversations -->
-            <div id="contactsList" class="flex-1 overflow-y-auto"></div>
+            
+            <div id="contactsList" class="flex-1 overflow-y-auto custom-scrollbar"></div>
         </div>
 
         <!-- Zone de chat -->
         <div class="flex-1 flex flex-col">
             <!-- État initial -->
-            <div id="welcomeScreen" class="flex-1 flex items-center justify-center bg-gray-50">
+            <div id="welcomeScreen" class="flex-1 flex items-center justify-center whatsapp-gray">
                 <div class="text-center">
-                    <div class="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-comment text-green-500 text-5xl"></i>
+                    <div class="w-32 h-32 whatsapp-green-light rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fab fa-whatsapp text-green-600 text-6xl"></i>
                     </div>
                     <h2 class="text-2xl font-semibold text-gray-800 mb-2">WhatsApp Web</h2>
-                    <p class="text-gray-600 max-w-md">
-                        Sélectionnez une conversation pour commencer à discuter.
-                    </p>
+                    <p class="text-gray-600 max-w-md">Envoyez et recevez des messages sans garder votre téléphone connecté.</p>
+                    <p class="text-gray-500 text-sm mt-2 max-w-md">Utilisez WhatsApp sur jusqu'à 4 appareils liés et 1 téléphone en même temps.</p>
                 </div>
             </div>
 
             <!-- Zone de chat active -->
             <div id="chatArea" class="hidden flex-1 flex flex-col">
-                <!-- Header du chat -->
-                <div id="chatHeader" class="bg-gray-50 p-4 border-b border-gray-200 flex items-center justify-between">
+                <div id="chatHeader" class="whatsapp-gray p-4 border-b border-gray-200 flex items-center justify-between chat-header-shadow">
                     <div class="flex items-center space-x-3">
-                        <div id="chatAvatar" class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg"></div>
+                        <div id="chatAvatar" class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center text-lg profile-pic"></div>
                         <div>
                             <h3 id="chatName" class="font-semibold text-gray-800"></h3>
-                            <p id="chatStatus" class="text-sm text-gray-500"></p>
+                            <p id="chatStatus" class="text-sm text-gray-500 flex items-center">
+                                <span class="status-indicator status-online"></span>
+                                En ligne
+                            </p>
                         </div>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="p-2 hover:bg-gray-200 rounded-full">
-                            <i class="fas fa-video text-gray-600"></i>
-                        </button>
-                        <button class="p-2 hover:bg-gray-200 rounded-full">
-                            <i class="fas fa-phone text-gray-600"></i>
-                        </button>
-                        <button class="p-2 hover:bg-gray-200 rounded-full">
-                            <i class="fas fa-ellipsis-v text-gray-600"></i>
-                        </button>
+                    <div class="flex space-x-1">
+                        <button class="p-2 hover:bg-gray-200 rounded-full transition-colors duration-150"><i class="fas fa-video text-gray-600"></i></button>
+                        <button class="p-2 hover:bg-gray-200 rounded-full transition-colors duration-150"><i class="fas fa-phone text-gray-600"></i></button>
+                        <button class="p-2 hover:bg-gray-200 rounded-full transition-colors duration-150"><i class="fas fa-ellipsis-v text-gray-600"></i></button>
                     </div>
                 </div>
-
-                <!-- Messages -->
-                <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 bg-gray-50">
+                <div id="messagesContainer" class="flex-1 overflow-y-auto p-4 chat-background custom-scrollbar">
                     <div id="messagesList" class="space-y-2"></div>
                 </div>
-
-                <!-- Zone de saisie message -->
-                <div class="bg-gray-50 p-4 border-t border-gray-200 flex h-auto items-center space-x-3">
-                    <button class="p-2 hover:bg-gray-200 rounded-full">
-                        <i class="fas fa-plus-circle text-gray-600 text-xl"></i>
-                    </button>
-                    <input
-                        type="text"
-                        id="messageInput"
-                        placeholder="Tapez votre message..."
-                        class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-                    <button id="sendBtn" class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                        <i id="sendIcon" class="fas fa-microphone text-white"></i>
-                    </button>
+                <div class="message-input-container">
+                    <div class="flex items-end space-x-3">
+                        <button class="p-3 attachment-button hover:bg-gray-200 rounded-full transition-colors duration-150">
+                            <i class="fas fa-plus text-xl"></i>
+                        </button>
+                        <div class="flex-1 flex items-end space-x-2">
+                            <div class="flex-1 relative">
+                                <input type="text" id="messageInput" placeholder="Tapez votre message..." class="message-input w-full px-4 py-3 focus:outline-none resize-none">
+                                <button class="absolute right-3 top-1/2 transform -translate-y-1/2 emoji-button hover:bg-gray-100 rounded-full p-1 transition-colors duration-150">
+                                    <i class="far fa-smile text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button id="sendBtn" class="send-button w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
+                            <i id="sendIcon" class="fas fa-microphone text-white"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Scripts JS -->
-    <script type="module"  src="src/app.js"></script>
-    <script type="module" src="event.js"></script>
+    <script  type="module" src="src/app.js"></script>
     <script type="module" src="controller.js"></script>
+    <script type="module" src="event.js"></script>
     <script type="module" src="src/gesContact.js"></script>
-    <script type="module" src="src/main.js"></script>
+    <script type="module" src="src/main.js" ></script>
 </body>
-</html> 
+</html>

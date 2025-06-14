@@ -1,10 +1,18 @@
-// Variables globales
-let broadcastMode = false, selectedContacts = new Set(), isDarkTheme = false;
+// Variables globales pour la diffusion et le thème
+let broadcastMode = false;
+let selectedContacts = new Set();
+let isDarkTheme = false;
 const cache = {};
 
 // Utilitaires
 const $ = id => cache[id] ||= document.getElementById(id);
-const safe = (fn, fallback) => { try { return fn(); } catch { return fallback; } };
+const safe = (fn, fallback) => { 
+    try { 
+        return fn(); 
+    } catch { 
+        return fallback; 
+    } 
+};
 
 // Gestion du thème
 function toggleTheme() {
@@ -22,13 +30,15 @@ function loadTheme() {
     if (icon) icon.className = isDarkTheme ? "fas fa-sun" : "fas fa-moon";
 }
 
-// Gestion diffusion
+// Gestion du mode diffusion
 function toggleBroadcastMode() {
     broadcastMode = !broadcastMode;
     selectedContacts.clear();
     
-    const btn = $("broadcastBtn"), panel = $("broadcastPanel"), chat = $("chatArea");
-    const welcome = $("welcomeScreen"), title = $("welcomeTitle"), subtitle = $("welcomeSubtitle");
+    const btn = $("broadcastBtn");
+    const panel = $("broadcastPanel");
+    const chat = $("chatArea");
+    const welcome = $("welcomeScreen");
     
     if (broadcastMode) {
         btn?.classList.replace("bg-gray-200", "bg-blue-500");
@@ -36,8 +46,12 @@ function toggleBroadcastMode() {
         panel?.classList.remove("hidden");
         chat?.classList.add("hidden");
         welcome?.classList.remove("hidden");
+        
+        const title = welcome?.querySelector('h2');
+        const subtitle = welcome?.querySelector('p');
         if (title) title.textContent = "Mode Diffusion";
         if (subtitle) subtitle.textContent = "Sélectionnez les contacts pour diffuser votre message";
+        
         updateMessageInput();
         renderContacts();
     } else {
@@ -45,8 +59,8 @@ function toggleBroadcastMode() {
         btn?.classList.replace("text-white", "text-gray-600");
         panel?.classList.add("hidden");
         resetMessageInput();
-        renderContacts(); // Utilisation de la fonction globale
-        AppState.activeChat = null; // Accès via AppState
+        renderContacts();
+        AppState.activeChat = null;
     }
     updateBroadcastButton();
 }
@@ -66,7 +80,11 @@ function resetMessageInput() {
 }
 
 function toggleContactSelection(contactId) {
-    selectedContacts[selectedContacts.has(contactId) ? "delete" : "add"](contactId);
+    if (selectedContacts.has(contactId)) {
+        selectedContacts.delete(contactId);
+    } else {
+        selectedContacts.add(contactId);
+    }
     renderContacts();
     updateMessageInput();
     updateBroadcastButton();
@@ -84,39 +102,47 @@ function updateBroadcastButton() {
 function sendBroadcastMessage() {
     const input = $("messageInput");
     const text = input?.value.trim();
+    
     if (!text || !selectedContacts.size || !AppState.appData) return;
     
     const timestamp = Date.now();
     const time = formatTime();
     
     selectedContacts.forEach(contactId => {
-        if (!AppState.appData.messages[contactId]) AppState.appData.messages[contactId] = [];
+        if (!AppState.appData.messages[contactId]) {
+            AppState.appData.messages[contactId] = [];
+        }
         
         AppState.appData.messages[contactId].push({
             id: generateId(),
-            text, sender: "me", time, timestamp, broadcast: true
+            text, 
+            sender: "me", 
+            time, 
+            timestamp, 
+            broadcast: true
         });
         
         const contact = AppState.appData.contacts.find(c => c.id === contactId);
-        if (contact) Object.assign(contact, { lastMessage: text, time });
+        if (contact) {
+            contact.lastMessage = text;
+            contact.time = time;
+        }
     });
     
     AppState.saveData();
     renderContacts();
     input.value = "";
     
-    const notification = document.createElement("div");
-    notification.className = "fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50";
-    notification.textContent = `Message diffusé à ${selectedContacts.size} contact(s)`;
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
+    showNotification(`Message diffusé à ${selectedContacts.size} contact(s)`, 'success');
 }
 
 function selectAllContacts() {
     if (!AppState.appData?.contacts) return;
+    
     AppState.appData.contacts
         .filter(c => !(isArchived(c.id) || isBlocked(c.id)))
         .forEach(c => selectedContacts.add(c.id));
+    
     renderContacts();
     updateMessageInput();
     updateBroadcastButton();
@@ -129,13 +155,16 @@ function deselectAllContacts() {
     updateBroadcastButton();
 }
 
-// Gestion des menus
+// Gestion des menus déroulants
 let openMenu = null;
+
 function toggleDropdown(menuId) {
     const menu = $(menuId);
     if (!menu) return;
     
-    if (openMenu && openMenu !== menuId) $(openMenu)?.classList.add("hidden");
+    if (openMenu && openMenu !== menuId) {
+        $(openMenu)?.classList.add("hidden");
+    }
     
     const isOpen = !menu.classList.contains("hidden");
     menu.classList.toggle("hidden");
@@ -155,15 +184,23 @@ function toggleDropdown(menuId) {
     }
 }
 
+// CSS pour le thème sombre
+const darkCSS = `
+.dark{background-color:#1f2937;color:#f9fafb}
+.dark .bg-white{background-color:#374151!important;color:#f9fafb}
+.dark .bg-gray-50{background-color:#4b5563!important}
+.dark .bg-gray-100{background-color:#6b7280!important}
+.dark .bg-gray-200{background-color:#9ca3af!important}
+.dark .text-gray-800{color:#f9fafb!important}
+.dark .text-gray-600{color:#d1d5db!important}
+.dark .text-gray-500{color:#9ca3af!important}
+.dark .border-gray-100{border-color:#4b5563!important}
+.dark .border-gray-200{border-color:#6b7280!important}
+.dark input,.dark textarea,.dark select{background-color:#4b5563!important;color:#f9fafb!important;border-color:#6b7280!important}
+.dark .shadow-sm{box-shadow:0 1px 2px 0 rgba(0,0,0,0.3)!important}
+`;
 
-
-// Object.entries(menuActions).forEach(([name, fn]) => {
-//     window[name] = (...args) => { fn(...args); $("broadcastMenu")?.classList.add("hidden"); $("themeMenu")?.classList.add("hidden"); $("settingsMenu")?.classList.add("hidden"); openMenu = null; };
-// });
-
-// CSS et initialisation
-const darkCSS = `.dark{background-color:#1f2937;color:#f9fafb}.dark .bg-white{background-color:#374151!important;color:#f9fafb}.dark .bg-gray-50{background-color:#4b5563!important}.dark .bg-gray-100{background-color:#6b7280!important}.dark .bg-gray-200{background-color:#9ca3af!important}.dark .text-gray-800{color:#f9fafb!important}.dark .text-gray-600{color:#d1d5db!important}.dark .text-gray-500{color:#9ca3af!important}.dark .border-gray-100{border-color:#4b5563!important}.dark .border-gray-200{border-color:#6b7280!important}.dark input,.dark textarea,.dark select{background-color:#4b5563!important;color:#f9fafb!important;border-color:#6b7280!important}.dark .shadow-sm{box-shadow:0 1px 2px 0 rgba(0,0,0,0.3)!important}`;
-
+// Initialisation
 function init() {
     if (!$("darkThemeStyles")) {
         const style = document.createElement("style");
@@ -172,17 +209,20 @@ function init() {
         document.head.appendChild(style);
     }
     loadTheme();
-    
-    // Exposer les fonctions globalement
+}
+
+// Exposition des fonctions globales
+if (typeof window !== "undefined") {
     Object.assign(window, {
         toggleBroadcastMode, sendBroadcastMessage, selectAllContacts, deselectAllContacts,
-        toggleTheme, loadTheme, toggleDropdown, toggleContactSelection
+        toggleTheme, loadTheme, toggleDropdown, toggleContactSelection, broadcastMode,
+        selectedContacts
     });
+    
+    // Initialisation au chargement
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+    } else {
+        init();
+    }
 }
-
-// Initialisation
-if (typeof window !== "undefined") {
-    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
-}
-
-
