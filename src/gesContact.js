@@ -229,7 +229,32 @@ const renderMessages = contactId => {
                     ${message.text}
                 </div>
             `;
+        } else if (message.type === 'voice') {
+            // Message vocal
+            const isMe = message.sender === 'me';
+            messageEl.className = `flex ${isMe ? 'justify-end' : 'justify-start'} mb-2`;
+            messageEl.dataset.messageId = message.id;
+            
+            messageEl.innerHTML = `
+                <div class="voice-message ${isMe ? 'sent' : ''}" style="max-width: 280px;">
+                    <button class="play-btn w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 transition-colors" 
+                            onclick="playVoiceMessage('${message.id}', '${message.audioUrl}')">
+                        <i class="fas fa-play text-sm"></i>
+                    </button>
+                    <div class="voice-progress">
+                        <div class="progress-bar voice-progress-bar"></div>
+                    </div>
+                    <div class="text-xs text-gray-600">
+                        <span class="duration">${formatDuration(message.duration)}</span>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                        ${message.time}
+                        ${isMe ? '<i class="fas fa-check text-blue-500 ml-1"></i>' : ''}
+                    </div>
+                </div>
+            `;
         } else {
+            // Message texte normal
             const isMe = message.sender === 'me';
             const broadcastIcon = message.broadcast ? ' 📡' : '';
             
@@ -254,6 +279,45 @@ const renderMessages = contactId => {
     if (messagesContainer) {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+};
+
+// Gestion du bouton d'envoi/enregistrement
+let pressTimer = null;
+let isLongPress = false;
+
+const handleSendButtonPress = () => {
+    const messageInput = document.getElementById('messageInput');
+    const hasText = messageInput && messageInput.value.trim().length > 0;
+    
+    if (hasText) {
+        // Si il y a du texte, envoyer le message
+        if (broadcastMode) {
+            sendBroadcastMessage();
+        } else {
+            sendMessage();
+        }
+        return;
+    }
+    
+    // Sinon, démarrer l'enregistrement vocal après un délai
+    isLongPress = false;
+    pressTimer = setTimeout(() => {
+        isLongPress = true;
+        startRecording();
+    }, 500); // 500ms pour détecter un appui long
+};
+
+const handleSendButtonRelease = () => {
+    if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+    }
+    
+    if (isLongPress && isRecording) {
+        stopRecording();
+    }
+    
+    isLongPress = false;
 };
 
 // Envoi de message
@@ -484,12 +548,18 @@ const submitCreateGroup = () => {
         showNotification(error.message, 'error');
     }
 };
-
+const formatDuration = (ms) => {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+};
 // Exposition des fonctions globales
 if (typeof window !== 'undefined') {
     Object.assign(window, {
         showContactOptions, showAddContactForm, showCreateGroupForm, 
         submitAddContact, submitCreateGroup, closeContextMenu,
-        renderContacts, openChat, sendMessage, updateSendButton
+        renderContacts, openChat, sendMessage, updateSendButton,
+        handleSendButtonPress, handleSendButtonRelease, formatDuration
     });
 }
